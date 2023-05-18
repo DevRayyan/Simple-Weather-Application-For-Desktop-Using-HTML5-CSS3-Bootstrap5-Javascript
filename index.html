@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.1.2/css/all.css">
+    <title>Weather Desktop Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+
+        }
+
+        h1 {
+            color: #000 !important;
+        }
+
+        .content {
+            padding-top: 60px;
+            margin-bottom: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+        }
+
+        main {
+
+            transition: .3s;
+            visibility: visible;
+        }
+
+        main.hide {
+            display: none;
+        }
+
+        .spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .spinner.active {
+            display: block;
+        }
+
+        .spinner i {
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader" class="spinner"><i class="fa-solid fa-spinner text-primary fa-spin"></i></div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm py-2 position-fixed start-0 end-0">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold fs-3" href="weather.html">Weather App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            main Cities
+                        </a>
+                        <ul class="dropdown-menu cities">
+                            <li><a class="dropdown-item" data-name="Karachi" href="#">Karachi</a></li>
+                            <li><a class="dropdown-item" data-name="Islamabad" href="#">Islamabad</a></li>
+                            <li><a class="dropdown-item" data-name="Lahore" href="#">Lahore</a></li>
+                            <li><a class="dropdown-item" data-name="Peshawar" href="#">Peshawar</a></li>
+                            <li><a class="dropdown-item" data-name="Faisalabad" href="#">Faisalabad</a></li>
+                            <li><a class="dropdown-item" data-name="Rawalpindi" href="#">Rawalpindi</a></li>
+                            <li><a class="dropdown-item" data-name="Hyderabad" href="#">Hyderabad</a></li>
+                            <li><a class="dropdown-item" data-name="Sialkot" href="#">Sialkot</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid bg-light content ">
+        <h1 class="text-center fw-bold py-4 ">Search Today's Weather </h1>
+        <div class="container col-12 col-sm-10 col-md-8 col-lg-6 pb-4 mb-5">
+            <div class="d-flex" role="search">
+                <input class="form-control me-2 rounded-0 px-3 py-2" id="keyword" type="search"
+                    placeholder="Search by country or city name" aria-label="Search">
+                <button class="btn px-4 btn-primary rounded-0" id="trigger" type="button">Search</button>
+            </div>
+            <div id="error" class="mt-3 text-danger"></div>
+        </div>
+        <main id="main" class="hide">
+            <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+                <div class="col">
+                    <div class="card mb-4 rounded-0 rounded-0 shadow border-0">
+                        <div class="card-header py-3">
+                            <h4 class="my-0 fw-bold">Temperature</h4>
+                        </div>
+                        <div class="card-body rounded-0">
+                            <h1 class="card-title pricing-card-title"><span id="tempHead"></span><small
+                                    class="text-muted fw-light"> &#8451;</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4 ">
+                                <li>Temperature is <b><span id="temp"></span> &#8451;</b></li>
+                                <li>Max Temperature is <b><span id="max_temp"></span> &#8451;</b></li>
+                                <li>Min Temperature is <b><span id="min_temp"></span> &#8451;</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col ">
+                    <div class="card mb-4 rounded-0 shadow border-primary">
+                        <div class="card-header rounded-0  py-3 text-white bg-primary border-primary">
+                            <h4 class="my-0 fw-bold">Wind Info</h4>
+                        </div>
+                        <div class="card-body rounded-0 alert alert-primary m-0">
+                            <h1 class="card-title pricing-card-title"><span id="windHead"></span><small
+                                    class="text-muted fw-normal"> km/hr</small>
+                            </h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>Wind Degree is <b><span id="wind_deg"></span> &#176;</b></li>
+                                <li>Wind Speed is <b><span id="wind_speed"></span> km/hr</b></li>
+                                <li>Pressure is <b><span id="pressure"></span> pascal</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mb-4 rounded-0 shadow border-0">
+                        <div class="card-header rounded-0 py-3">
+                            <h4 class="my-0 fw-bold">Humidity</h4>
+                        </div>
+                        <div class="card-body">
+                            <h1 class="card-title rounded-0 pricing-card-title"><span id="humidityHead"></span> <small
+                                    class="text-muted fw-normal">%</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>Humidity is <b><span id="humidity"></span> %</b></li>
+                                <li>Sunrise Time is <b><span id="sunrise_time"></span> sec</b></li>
+                                <li>Sunset Time is <b><span id="sunset_time"></span> sec</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="footer bg-light d-flex align-items-center border-top fw-normal small">
+        <div class="ms-3"><u><b>WeatherApp</b></u> © 2023 copyright free.</div>
+    </footer>
+    <script>
+        cities = document.querySelectorAll(".cities li a");
+        cities.forEach(city => {
+            city.addEventListener("click", (e) => {
+                name = e.target.getAttribute("data-name");
+                weather(name)
+                keyword.value = "";
+                keyword.blur();
+
+            })
+        });
+        trigger.addEventListener("click", () => {
+            if (keyword.value.length !== 0) {
+
+                weather(keyword.value)
+                keyword.value = "";
+                keyword.blur();
+            }
+        })
+        document.addEventListener("keydown", (e) => {
+            // e.preventDefault();
+            if (e.key === "Enter") {
+                if (keyword.value.length !== 0) {
+                    weather(keyword.value)
+                    keyword.value = "";
+                    keyword.blur();
+
+                }
+            }
+        })
+        async function weather(keyword) {
+            const apikey = "a9c005ffb5848dfaea676c5199b1260f";
+            loader.classList.add("active")
+            let url = `https://api.openweathermap.org/data/2.5/weather?q=${keyword}&appid=${apikey}`;
+            await fetch(url)
+                .then((Res) => {
+                    return Res.json()
+                })
+                .then((Res) => {
+                    if (Res.message) {
+                        error.innerText = Res.message;
+                        main.classList.add("hide")
+                    } else {
+                        error.innerText = "";
+                    }
+                    temp.innerText = Math.round(Res.main.temp) - 273;
+                    tempHead.innerText = Math.round(Res.main.temp) - 273;
+                    max_temp.innerText = Math.round(Res.main.temp_max) - 273;
+                    min_temp.innerText = Math.round(Res.main.temp_min) - 273;
+                    pressure.innerText = Res.main.pressure;
+                    humidity.innerText = Res.main.humidity;
+                    humidityHead.innerText = Res.main.humidity;
+                    wind_deg.innerText = Res.wind.deg;
+                    wind_speed.innerText = Res.wind.speed;
+                    windHead.innerText = Res.wind.speed;
+                    sunrise_time.innerText = Res.sys.sunrise;
+                    sunset_time.innerText = Res.sys.sunset;
+                    main.classList.remove("hide")
+                })
+                .catch((Error) => {
+                    console.log(Error)
+                })
+            loader.classList.remove("active")
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
